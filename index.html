@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحة هبوط احترافية - توصيل مجاني على 2 منتج</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Styles for RTL and Design */
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background-color: #f7f7f7;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 900px;
+        }
+        /* الشريط العلوي الثابت */
+        #sticky-offer-bar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        /* بطاقات الموديلات - Border Blue */
+        .model-card {
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+        .model-card.active {
+            border-color: #2563EB; /* Blue-600 */
+            box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+        }
+        /* ضمان ارتفاع متناسق للبطاقات باستخدام flex */
+        .model-card-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* تأكد من أن المحتوى يملأ البطاقة بالكامل */
+            justify-content: space-between; /* دفع عناصر التحكم بالكمية للأسفل */
+        }
+
+        /* أزرار الكمية */
+        .qty-btn {
+            color: white;
+            transition: background-color 0.1s;
+        }
+        .qty-btn:disabled {
+            background-color: #9ca3af !important; 
+            cursor: not-allowed;
+        }
+        /* شريط التقدم */
+        #progress-bar-fill {
+            transition: width 0.4s ease-in-out, background-color 0.4s;
+        }
+        /* ملخص الطلب - Summary Box Border */
+        .summary-box {
+            border: 2px solid #2563EB; /* Blue-600 border for emphasis */
+            background-color: #EFF6FF; /* Blue-50 light background */
+        }
+        
+        /* Mobile adjustment for form/summary layout */
+        @media (min-width: 768px) {
+            .form-grid {
+                grid-template-columns: 2fr 1.5fr;
+            }
+        }
+        /* Carousel Styles */
+        .carousel-item {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+        .carousel-item.active {
+            display: block;
+        }
+
+        /* الزر العائم (Sticky CTA) */
+        #floating-cta-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 40; 
+            padding: 1rem;
+            background: linear-gradient(to top, rgba(243, 244, 246, 1), rgba(243, 244, 246, 0.8));
+            backdrop-filter: blur(2px);
+            border-top: 1px solid #e5e7eb;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out, opacity 0.3s;
+            opacity: 0;
+        }
+        
+        #floating-cta-container.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* إخفاء الزر العائم افتراضياً على الديسكتوب لإعطاء مساحة أكبر */
+        @media (min-width: 768px) {
+            #floating-cta-container {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="dir-rtl bg-gray-50">
+
+    <!-- I. شريط العرض الثابت (Sticky Offer Bar) -->
+    <div id="sticky-offer-bar" class="bg-red-600 text-white text-center p-3 font-extrabold shadow-2xl">
+        🚨 **تنبيه: التوصيل مجاني 100% عند طلب 2 منتج أو أكثر! ابدأ التوفير الآن.**
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <!-- II. قسم البطل (Hero Section) -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-gray-800 mb-4">
+                جدد غرفتك بأناقة: طقم الدراب 6 قطع (جودة عالية)
+            </h1>
+            
+            <!-- معرض صور المنتجات المتحرك (Carousel) -->
+            <div id="product-carousel" class="relative w-full mx-auto max-w-lg overflow-hidden rounded-xl shadow-2xl h-[300px] md:h-[450px]">
+                
+                <!-- روابط الصور المؤقتة (سيتم استبدالها بروابط GitHub المباشرة) -->
+                <img src="https://placehold.co/900x900/4c4d51/ffffff?text=Product+Image+A1" data-model="Crimson-Red" alt="طقم وردي/أحمر" class="carousel-item active w-full h-full object-cover">
+                <img src="https://placehold.co/900x900/3B82F6/ffffff?text=Product+Image+A2" data-model="Deep-Blue" alt="طقم رمادي/أزرق" class="carousel-item w-full h-full object-cover">
+                <img src="https://placehold.co/900x900/10B981/ffffff?text=Product+Image+A3" data-model="Emerald-Green" alt="طقم رمادي/أسود" class="carousel-item w-full h-full object-cover">
+                <img src="https://placehold.co/900x900/8B5CF6/ffffff?text=Product+Image+A4" data-model="Royal-Purple" alt="طقم بني/بيج" class="carousel-item w-full h-full object-cover">
+                
+                <!-- مؤشرات التنقل التلقائي -->
+                <div id="carousel-dots" class="absolute bottom-4 w-full flex justify-center space-x-2 space-x-reverse">
+                    <!-- يتم توليد النقاط بواسطة JS -->
+                </div>
+            </div>
+        </header>
+        
+        <!-- III. محدد الكمية والموديل (The Offer Builder) -->
+        <section id="order-builder" class="order-builder mb-10 p-5 bg-white rounded-xl shadow-2xl">
+            <h2 class="text-3xl font-bold text-gray-800 border-b-4 border-blue-600 pb-2 mb-6">
+                1. اختر موديلاتك الآن:
+            </h2>
+            
+            <!-- بطاقات الموديلات (Grid) - Grid Items now have consistent height -->
+            <div id="models-container" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                
+                <!-- الموديل 1 -->
+                <div class="model-card p-3 bg-blue-50 rounded-xl" data-model="Crimson-Red" data-price="4300">
+                    <div class="model-card-content">
+                        <!-- القسم العلوي -->
+                        <div>
+                            <!-- الصورة المؤقتة -->
+                            <img src="https://placehold.co/300x300/4c4d51/ffffff?text=Model+A1" alt="طقم وردي/أحمر" class="w-full h-auto rounded-lg mb-2 object-cover aspect-square shadow-md">
+                            <h3 class="font-bold text-lg mb-1">موديل A1 - الوردي/الأحمر</h3>
+                            <p class="text-gray-700 font-bold mb-3">4,300 د.ج</p>
+                        </div>
+                        <!-- التحكم في الكمية (القسم السفلي) -->
+                        <div class="quantity-control flex justify-center items-center mt-auto">
+                            <button class="qty-btn rounded-r-lg p-2 bg-blue-600 hover:bg-blue-700 text-white" data-action="minus" disabled>-</button>
+                            <span class="qty-value text-xl font-bold px-3 border-t border-b border-gray-300 bg-white min-w-[40px] text-center">0</span>
+                            <button class="qty-btn rounded-l-lg p-2 bg-blue-600 hover:bg-blue-700 text-white" data-action="plus">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الموديل 2 -->
+                <div class="model-card p-3 bg-blue-50 rounded-xl" data-model="Deep-Blue" data-price="4300">
+                    <div class="model-card-content">
+                        <!-- القسم العلوي -->
+                        <div>
+                            <!-- الصورة المؤقتة -->
+                            <img src="https://placehold.co/300x300/3B82F6/ffffff?text=Model+A2" alt="طقم رمادي/أزرق" class="w-full h-auto rounded-lg mb-2 object-cover aspect-square shadow-md">
+                            <h3 class="font-bold text-lg mb-1">موديل A2 - الرمادي/الأزرق</h3>
+                            <p class="text-gray-700 font-bold mb-3">4,300 د.ج</p>
+                        </div>
+                        <!-- التحكم في الكمية (القسم السفلي) -->
+                        <div class="quantity-control flex justify-center items-center mt-auto">
+                            <button class="qty-btn rounded-r-lg p-2 bg-blue-600 hover:bg-blue-700 text-white" data-action="minus" disabled>-</button>
+                            <span class="qty-value text-xl font-bold px-3 border-t border-b border-gray-300 bg-white min-w-[40px] text-center">0</span>
+                            <button class="qty-btn rounded-l-lg p-2 bg-blue-600 hover:bg-blue-700 text-white" data-action="plus">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الموديل 3 -->
+                <div class="model-card p-3 bg-blue-50 rounded-xl" data-model="Emerald-Green" data-price="4300">
+                    <div class="model-card-content">
+                        <!-- القسم العلوي -->
+                        <div>
+                            <!-- الصورة المؤقتة -->
+                            <img src="https://placehold.co/300x300/10B981/ffffff?text=Model+A3" alt="طقم رمادي/أسود" class="w-full h-auto rounded-lg mb-2 object-cover aspect-square shadow-md">
+                            <h3 class="font-bold text-lg mb-1">موديل A3 - الرمادي/الأسود</h3>
+                            <p class="text-gray-700 font-bold mb-3">4,300 د.ج</p>
+                        </div>
+                        <!-- التحكم في الكمية (القسم السفلي) -->
+                        <div class="quantity-control flex justify-center items-center mt-auto">
+                            <button class="qty-btn rounded-r-lg p-2 bg-blue-600 hover:bg-blue-700 text-white" data-action="minus" disabled>-</button>
+                            <span class="qty-value text-xl font-bold px-3 border-t border-b border-gray-300 bg-white min-w-[40px] text-center">0</span>
+                            <button class="qty-btn rounded-l-lg p-2 bg-blue-600 hover:bg-blue-700 text-white" data-action="plus">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الموديل 4 -->
+                <div class="model-card p-3 bg-blue-50 rounded-xl" data-model="Royal-Purple" data-price="4300">
+                    <div class="model-card-content">
+                        <!-- القسم العلوي -->
+                        <div>
+                            <!-- الصورة المؤقتة -->
+                            <img src="https://placehold.co/300x300/8B5CF6/ffffff?text=Model+A4" alt="طقم بني/بيج" class="w-full h-auto rounded-lg mb-2 object-cover aspect-square shadow-md">
+                            <h3 class="font-bold text-lg mb-1">موديل A4 - البني/البيج</h3>
+                            <p class="text-gray-700 font-bold mb-3">4,300 د.ج</p>
+                        </div>
+                        <!-- التحكم في الكمية (القسم السفلي) -->
+                        <div class="quantity-control flex justify-center items-center mt-auto">
+                            <button class="qty-btn rounded-r-lg p-2 bg-blue-600 hover:bg-blue-700 text-white" data-action="minus" disabled>-</button>
+                            <span class="qty-value text-xl font-bold px-3 border-t border-b border-gray-300 bg-white min-w-[40px] text-center">0</span>
+                            <button class="qty-btn rounded-l-lg p-2 bg-blue-600 hover:bg-blue-700 text-white" data-action="plus">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- شريط التقدم البصري -->
+            <div class="mt-8 bg-gray-200 rounded-full h-8 relative overflow-hidden shadow-inner">
+                <div id="progress-bar-fill" class="h-full absolute rounded-full bg-yellow-400" style="width: 0%;"></div>
+                <p id="progress-message" class="absolute inset-0 text-center text-sm font-black text-gray-800 flex items-center justify-center px-4">
+                    أضف موديل واحد على الأقل للبدء.
+                </p>
+            </div>
+        </section>
+
+        <!-- صندوق السعر -->
+        <div class="text-center mb-10">
+            <div class="inline-block p-4 rounded-xl bg-white shadow-2xl border-4 border-red-500">
+                <p class="text-lg text-gray-500 line-through">السعر الأصلي: 4800 د.ج</p>
+                <p class="text-4xl font-black text-red-600">4,300.00 د.ج</p>
+                <p class="text-sm text-gray-500 font-semibold mt-1">سعر الموديل الواحد (شامل كل الرسوم)</p>
+            </div>
+        </div>
+
+        <!-- IV. نموذج الشحن وملخص الطلب (Checkout Form) -->
+        <section id="checkout-section" class="checkout-form p-6 bg-white rounded-xl shadow-2xl">
+            <h2 class="text-3xl font-bold text-gray-800 border-b-4 border-blue-600 pb-2 mb-6">
+                2. أكمل معلوماتك واستلم طلبك:
+            </h2>
+            
+            <div class="grid grid-cols-1 md:form-grid gap-6">
+                
+                <!-- عمود النموذج (Form Column) - يبقى على اليمين (في RTL) -->
+                <form id="order-form" action="#" method="POST" class="space-y-4">
+                    <input type="text" name="full_name" placeholder="الاسم بالكامل" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 shadow-sm">
+                    <input type="tel" name="phone" id="phone-input" placeholder="رقم الهاتف (ضروري للتأكيد)" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 shadow-sm">
+                    
+                    <select id="wilaya-select" name="wilaya" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 shadow-sm">
+                        <option value="">-- اختر الولاية --</option>
+                        <!-- يتم ملؤها بواسطة JS -->
+                    </select>
+
+                    <select id="baladiya-select" name="baladiya" required disabled class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 bg-gray-100 shadow-sm">
+                        <option value="">-- اختر البلدية (بعد اختيار الولاية) --</option>
+                    </select>
+
+                    <textarea name="notes" placeholder="ملاحظات إضافية (اختياري)" rows="2" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 shadow-sm"></textarea>
+                    
+                    <!-- زر تأكيد الطلب النهائي (CTA الثابت داخل النموذج) -->
+                    <button type="submit" form="order-form" id="cta-button" disabled class="cta-final-button w-full bg-gray-400 text-white p-4 rounded-xl font-extrabold text-2xl mt-4 shadow-xl cursor-not-allowed transition duration-300">
+                        الرجاء اختيار منتج واحد على الأقل
+                    </button>
+                </form>
+
+                <!-- عمود الملخص (Summary Column) - يبقى على اليسار (في RTL) -->
+                <div class="order-summary-box summary-box p-5 rounded-xl h-fit shadow-inner md:order-first"> 
+                    <h3 class="text-2xl font-black mb-5 text-blue-700 border-b-2 border-blue-300 pb-2">ملخص فاتورتك</h3>
+                    
+                    <div class="space-y-3 text-lg">
+                        <div class="summary-line flex justify-between">
+                            <span class="text-gray-600">المجموع الفرعي:</span>
+                            <span id="sub-total" class="font-extrabold text-gray-800">0.00 د.ج</span>
+                        </div>
+                        
+                        <div class="summary-line shipping-line flex justify-between">
+                            <span class="text-gray-600">رسوم التوصيل:</span>
+                            <span id="shipping-cost" class="font-extrabold text-red-500">500.00 د.ج</span>
+                        </div>
+                    </div>
+
+                    <div class="total-line flex justify-between pt-5 mt-5 border-t-2 border-dashed border-blue-400">
+                        <span class="text-xl font-black text-blue-800">الإجمالي النهائي:</span>
+                        <span id="final-total" class="text-3xl font-black text-blue-700">0.00 د.ج</span>
+                    </div>
+
+                    <!-- رسالة التوفير (تظهر فقط عند الشحن المجاني) -->
+                    <div id="shipping-save-msg" class="bg-green-100 text-center p-3 mt-4 rounded-lg border-2 border-green-400 shadow-sm" style="display:none;">
+                        <p class="text-green-700 font-extrabold text-lg">لقد وفّرت 500 د.ج (شحن مجاني!)</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- V. قسم الثقة -->
+        <section class="trust-section text-center my-10 p-5 bg-white rounded-xl shadow-2xl">
+            <h3 class="text-2xl font-bold text-gray-700 mb-4">لماذا تشتري منا؟</h3>
+            <div class="guarantees flex flex-wrap justify-center space-x-4 space-x-reverse text-gray-700 font-semibold">
+                <span class="flex items-center p-3 m-1 bg-blue-100 rounded-full shadow-md">✅ دفع بعد الاستلام</span>
+                <span class="flex items-center p-3 m-1 bg-blue-100 rounded-full shadow-md">🔒 ضمان جودة المنتج</span>
+                <span class="flex items-center p-3 m-1 bg-blue-100 rounded-full shadow-md">🚚 توصيل سريع لكل الولايات</span>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- الزر العائم (Floating CTA) - يظهر على الهواتف فقط - اللون الأزرق الموحد -->
+    <div id="floating-cta-container">
+        <button id="floating-cta-button" disabled class="w-full bg-gray-400 text-white p-4 rounded-xl font-extrabold text-xl shadow-2xl cursor-not-allowed transition duration-300">
+            الرجاء اختيار منتج واحد على الأقل (انقر للانتقال للدفع)
+        </button>
+    </div>
+
+    <script>
+        // --- متغيرات الأسعار والحدود ---
+        const MODEL_PRICE = 4300; 
+        const SHIPPING_COST = 500; 
+        const FREE_SHIPPING_THRESHOLD = 2; // توصيل مجاني عند 2 منتج أو أكثر
+        const CONTACT_PHONE = '0776587890'; // رقم هاتف خدمة العملاء
+
+        // --- عناصر DOM ---
+        const modelsContainer = document.getElementById('models-container');
+        const subTotalElement = document.getElementById('sub-total');
+        const shippingCostElement = document.getElementById('shipping-cost');
+        const finalTotalElement = document.getElementById('final-total');
+        const shippingSaveMsg = document.getElementById('shipping-save-msg');
+        const progressBarFill = document.getElementById('progress-bar-fill');
+        const progressMessage = document.getElementById('progress-message');
+        const ctaButton = document.getElementById('cta-button'); // الزر الثابت
+        const floatingCtaContainer = document.getElementById('floating-cta-container');
+        const floatingCtaButton = document.getElementById('floating-cta-button'); // الزر العائم
+        const checkoutSection = document.getElementById('checkout-section'); // قسم الدفع
+        const wilayaSelect = document.getElementById('wilaya-select');
+        const baladiyaSelect = document.getElementById('baladiya-select');
+        const orderForm = document.getElementById('order-form');
+        const carousel = document.getElementById('product-carousel');
+        const carouselItems = Array.from(carousel.querySelectorAll('.carousel-item'));
+        const carouselDotsContainer = document.getElementById('carousel-dots');
+        
+        let totalQuantity = 0;
+        let selectedModels = {}; 
+        let finalTotalDisplayValue = '0.00 د.ج'; 
+        let autoSlideInterval;
+
+        // --- دالة تنسيق العملة ---
+        function formatCurrency(amount) {
+            // استخدام Locale 'ar-DZ' لتنسيق الأرقام الجزائرية (اختياري)
+            return `${amount.toLocaleString('ar-DZ')} د.ج`;
+        }
+
+        // --- وظائف الـ Carousel ---
+
+        function initCarousel() {
+            // توليد نقاط التنقل
+            carouselItems.forEach((item, index) => {
+                const dot = document.createElement('span');
+                dot.className = `w-3 h-3 bg-white rounded-full mx-1 opacity-50 cursor-pointer transition-opacity duration-300`;
+                dot.dataset.index = index;
+                dot.addEventListener('click', () => {
+                    clearInterval(autoSlideInterval); 
+                    showSlide(index);
+                });
+                carouselDotsContainer.appendChild(dot);
+            });
+            showSlide(0); 
+            startAutoSlide();
+        }
+
+        function showSlide(index) {
+            carouselItems.forEach((item, i) => {
+                item.classList.remove('active');
+                const dot = carouselDotsContainer.children[i];
+                if (dot) {
+                    dot.classList.remove('opacity-100', 'shadow-lg'); 
+                    dot.classList.add('opacity-50');
+                }
+            });
+
+            if (carouselItems[index]) {
+                carouselItems[index].classList.add('active');
+                const targetDot = carouselDotsContainer.children[index];
+                if (targetDot) {
+                    targetDot.classList.add('opacity-100', 'shadow-lg');
+                    targetDot.classList.remove('opacity-50');
+                }
+            }
+        }
+        
+        function startAutoSlide() {
+            clearInterval(autoSlideInterval);
+            autoSlideInterval = setInterval(() => {
+                const activeIndex = carouselItems.findIndex(item => item.classList.contains('active'));
+                const nextSlide = (activeIndex + 1) % carouselItems.length;
+                showSlide(nextSlide);
+            }, 5000); 
+        }
+
+        function showModelImage(modelName) {
+            clearInterval(autoSlideInterval);
+            const targetIndex = carouselItems.findIndex(item => item.dataset.model === modelName);
+            if (targetIndex !== -1) {
+                showSlide(targetIndex);
+            }
+        }
+
+        function resetCarouselToAuto() {
+            const hasSelection = totalQuantity > 0;
+            if (!hasSelection) {
+                showSlide(0);
+                startAutoSlide();
+            }
+        }
+
+        // --- وظائف تحديث سلة التسوق ---
+
+        function updateCart() {
+            totalQuantity = 0;
+            let subTotal = 0;
+            let shippingCost = SHIPPING_COST;
+            let firstSelectedModel = null;
+            
+            // حساب الكمية الإجمالية والمجموع الفرعي
+            for (const model in selectedModels) {
+                const qty = selectedModels[model];
+                totalQuantity += qty;
+                subTotal += qty * MODEL_PRICE;
+                if (qty > 0 && !firstSelectedModel) {
+                    firstSelectedModel = model;
+                }
+            }
+            
+            // تحديث Carousel
+            if (firstSelectedModel) {
+                showModelImage(firstSelectedModel);
+            } else {
+                resetCarouselToAuto();
+            }
+
+            // تحديد تكلفة الشحن
+            let isFreeShipping = totalQuantity >= FREE_SHIPPING_THRESHOLD;
+            if (isFreeShipping) {
+                shippingCost = 0;
+            }
+
+            const finalTotal = subTotal + shippingCost;
+            finalTotalDisplayValue = formatCurrency(finalTotal);
+
+            // 1. تحديث الملخص
+            subTotalElement.textContent = formatCurrency(subTotal);
+            finalTotalElement.textContent = finalTotalDisplayValue;
+            
+            // 2. تحديث رسوم الشحن ورسالة التوفير
+            if (isFreeShipping) {
+                shippingCostElement.textContent = `0.00 د.ج`;
+                shippingCostElement.className = 'font-extrabold text-green-600';
+                shippingSaveMsg.style.display = 'block';
+            } else {
+                shippingCostElement.textContent = formatCurrency(SHIPPING_COST);
+                shippingCostElement.className = 'font-extrabold text-red-500';
+                shippingSaveMsg.style.display = 'none';
+            }
+
+            // 3. تحديث شريط التقدم وزر الـ CTA
+            updateProgressBar(totalQuantity, finalTotalDisplayValue);
+        }
+
+        function updateProgressBar(qty, finalTotalDisplay) {
+            let percentage = 0;
+            let message = '';
+            let barColor = 'bg-yellow-400';
+            let isEnabled = false;
+
+            if (qty === 0) {
+                percentage = 0;
+                message = `الرجاء اختيار منتج واحد على الأقل!`;
+            } else if (qty === 1) {
+                percentage = 50;
+                message = `أضف منتج آخر لـ **شحن مجاني!** (باقي منتج واحد)`;
+                barColor = 'bg-blue-600'; // استخدام الأزرق للمرحلة الأولى
+                isEnabled = true;
+            } else {
+                percentage = 100;
+                message = `تهانينا! لقد حصلت على توصيل مجاني فوري!`;
+                barColor = 'bg-green-600';
+                isEnabled = true;
+            }
+            
+            const ctaText = isEnabled 
+                ? `أكد طلبك الآن: ${finalTotalDisplay} ${qty >= 2 ? '(توصيل مجاني!)' : ''}`
+                : 'الرجاء اختيار منتج واحد على الأقل';
+
+
+            progressBarFill.style.width = `${percentage}%`;
+            progressBarFill.className = `h-full absolute rounded-full ${barColor}`;
+            progressMessage.innerHTML = message;
+            
+            // تحديث حالة وأزرار CTA (الثابت والعائم) - استخدام اللون الأزرق الموحد
+            [ctaButton, floatingCtaButton].forEach(btn => {
+                btn.disabled = !isEnabled;
+                btn.textContent = isEnabled ? ctaText : 'الرجاء اختيار منتج واحد على الأقل';
+                
+                if (isEnabled) {
+                    btn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                    // تم تغيير اللون إلى الأزرق الداكن ليتناسق مع النموذج
+                    btn.classList.add('bg-blue-700', 'hover:bg-blue-800'); 
+                } else {
+                    btn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                    btn.classList.remove('bg-blue-700', 'hover:bg-blue-800');
+                }
+            });
+            
+            // التحكم في ظهور الزر العائم الجديد
+            if (window.innerWidth < 768) {
+                floatingCtaContainer.classList.toggle('visible', isEnabled);
+            }
+
+            progressMessage.classList.toggle('text-white', percentage >= 50);
+            progressMessage.classList.toggle('text-gray-800', percentage < 50);
+        }
+        
+        // --- قاعدة بيانات الولايات والبلديات (58 ولاية) ---
+        const algeriaCities = {
+            "01": { name: "أدرار", baladiyat: ["أدرار", "تمنطيط", "فنوغيل", "ريغان", "تيميمون", "أولف", "برج باجي مختار"] },
+            "02": { name: "الشلف", baladiyat: ["الشلف", "المرسى", "تنس", "أبو الحسن", "القلعة", "وادي الفضة", "أولاد فارس"] },
+            "03": { name: "الأغواط", baladiyat: ["الأغواط", "قصر الحيران", "عين ماضي", "تاجموت", "الخنق"] },
+            "04": { name: "أم البواقي", baladiyat: ["أم البواقي", "عين البيضاء", "عين مليلة", "عين فكرون", "مسكيانة", "سيقوس"] },
+            "05": { name: "باتنة", baladiyat: ["باتنة", "بريكة", "مروانة", "أريس", "عين التوتة", "الشمرة"] },
+            "06": { name: "بجاية", baladiyat: ["بجاية", "أكفادو", "القصر", "سيدي عيش", "أوقاس", "ملبو", "تازمالت"] },
+            "07": { name: "بسكرة", baladiyat: ["بسكرة", "أورلال", "سيدي خالد", "طولقة", "سيدي عقبة", "القنطرة"] },
+            "08": { name: "بشار", baladiyat: ["بشار", "العبادلة", "بني ونيف", "لحمر", "تندوف"] },
+            "09": { name: "البليدة", baladiyat: ["البليدة", "الشبلي", "العفرون", "موزاية", "الشفة", "بني مراد"] },
+            "10": { name: "البويرة", baladiyat: ["البويرة", "سور الغزلان", "الأخضرية", "بشلول", "قادرية", "عين بسام"] },
+            "11": { name: "تمنراست", baladiyat: ["تمنراست", "عين صالح", "إدلس", "تاهيفات", "تيمياوين"] },
+            "12": { name: "تبسة", baladiyat: ["تبسة", "الشريعة", "بئر العاتر", "العوينات", "الماي الأبيض"] },
+            "13": { name: "تلمسان", baladiyat: ["تلمسان", "مغنية", "سبدو", "نيدرومة", "الغزوات", "عين فزة"] },
+            "14": { name: "تيارت", baladiyat: ["تيارت", "عين الذهب", "مادنة", "السوقر", "مغيلة"] },
+            "15": { name: "تيزي وزو", baladiyat: ["تيزي وزو", "ذراع الميزان", "عزازقة", "تيزي غنيف", "بوغني", "الأربعاء ناث إيراثن"] },
+            "16": { name: "الجزائر", baladiyat: ["الجزائر الوسطى", "باب الواد", "بئر مراد رايس", "الدار البيضاء", "الشراقة", "براقي"] },
+            "17": { name: "الجلفة", baladiyat: ["الجلفة", "عين وسارة", "مسعد", "حاسي بحبح", "البيرين"] },
+            "18": { name: "جيجل", baladiyat: ["جيجل", "الطاهير", "الميلية", "زيامة منصورية", "الشحنة"] },
+            "19": { name: "سطيف", baladiyat: ["سطيف", "العلمة", "بوقاعة", "عين ولمان", "صالح باي", "عين آزال"] },
+            "20": { name: "سعيدة", baladiyat: ["سعيدة", "عين السخونة", "يوب", "الحساسنة"] },
+            "21": { name: "سكيكدة", baladiyat: ["سكيكدة", "القل", "عزابة", "الحروش", "تمالوس"] },
+            "22": { name: "سيدي بلعباس", baladiyat: ["سيدي بلعباس", "سفيزف", "تلاغ", "رأس الماء", "عين البرد"] },
+            "23": { name: "عنابة", baladiyat: ["عنابة", "البوني", "برحال", "سرايدي", "الحجار"] },
+            "24": { name: "قالمة", baladiyat: ["قالمة", "هيليوبوليس", "بوشقوف", "وادي الزناتي", "عين حساينية"] },
+            "25": { name: "قسنطينة", baladiyat: ["قسنطينة", "الخروب", "عين عبيد", "حامة بوزيان", "ديدوش مراد"] },
+            "26": { name: "المدية", baladiyat: ["المدية", "البرواقية", "قصر البخاري", "بني سليمان", "العمارية"] },
+            "27": { name: "مستغانم", baladiyat: ["مستغانم", "حاسي ماماش", "عين تادلس", "خير الدين", "بوقيراط"] },
+            "28": { name: "المسيلة", baladiyat: ["المسيلة", "سيدي عيسى", "مقر", "بوسعادة", "حمام الضلعة"] },
+            "29": { name: "معسكر", baladiyat: ["معسكر", "تيغنيف", "المحمدية", "سيق", "غريس"] },
+            "30": { name: "ورقلة", baladiyat: ["ورقلة", "الرويسات", "تقرت", "حاسي مسعود", "البرمة"] },
+            "31": { name: "وهران", baladiyat: ["وهران", "أرزيو", "بطيوة", "قديل", "بئر الجير", "عين الترك"] },
+            "32": { name: "البيض", baladiyat: ["البيض", "بوقطب", "بريزينة", "الرقاصة"] },
+            "33": { name: "إليزي", baladiyat: ["إليزي", "جانت", "برج الحواس"] },
+            "34": { name: "برج بوعريريج", baladiyat: ["برج بوعريريج", "رأس الوادي", "مجّانة", "المنصورة", "الحمادية"] },
+            "35": { name: "بومرداس", baladiyat: ["بومرداس", "دلس", "الثنية", "قورصو", "يسر"] },
+            "36": { name: "الطارف", baladiyat: ["الطارف", "بوحجار", "الزيتونة", "القالة"] },
+            "37": { name: "تندوف", baladiyat: ["تندوف"] },
+            "38": { name: "تيسمسيلت", baladiyat: ["تيسمسيلت", "ثنية الحد", "برج بونعامة"] },
+            "39": { name: "الوادي", baladiyat: ["الوادي", "قمار", "حساني عبد الكريم", "الزاوية العابدية"] },
+            "40": { name: "خنشلة", baladiyat: ["خنشلة", "ششار", "عين الطويلة", "قايس"] },
+            "41": { name: "سوق أهراس", baladiyat: ["سوق أهراس", "الحدادة", "خميسة", "سدراتة"] },
+            "42": { name: "تيبازة", baladiyat: ["تيبازة", "شرشال", "القليعة", "فوكة", "حجوط"] },
+            "43": { name: "ميلة", baladiyat: ["ميلة", "فرجيوة", "شلغوم العيد", "تاجنانت"] },
+            "44": { name: "عين الدفلى", baladiyat: ["عين الدفلى", "العبادية", "الخميس", "مليانة"] },
+            "45": { name: "النعامة", baladiyat: ["النعامة", "عين الصفراء", "مشرية", "صفيصيفة"] },
+            "46": { name: "عين تموشنت", baladiyat: ["عين تموشنت", "بني صاف", "حمام بوحجر", "ولهاصة"] },
+            "47": { name: "غرداية", baladiyat: ["غرداية", "القرارة", "بريان", "المنيعة", "متليلي"] },
+            "48": { name: "غليزان", baladiyat: ["غليزان", "يلل", "مازونة", "وادي ارهيو", "زمورة"] },
+            "49": { name: "المغير", baladiyat: ["المغير", "جامعة", "أم الطيور"] },
+            "50": { name: "المنيعة", baladiyat: ["المنيعة", "حاسي القارة", "حاسي لفحل"] },
+            "51": { name: "أولاد جلال", baladiyat: ["أولاد جلال", "سيدي خالد", "البسباس"] },
+            "52": { name: "برج باجي مختار", baladiyat: ["برج باجي مختار"] },
+            "53": { name: "بني عباس", baladiyat: ["بني عباس", "إقلي", "تامترت"] },
+            "54": { name: "تيميمون", baladiyat: ["تيميمون", "أولاد سعيد", "شروين"] },
+            "55": { name: "توقرت", baladiyat: ["توقرت", "النزلة", "تبسبست"] },
+            "56": { name: "جانت", baladiyat: ["جانت", "إفني"] },
+            "57": { name: "عين صالح", baladiyat: ["عين صالح", "إدلس"] },
+            "58": { name: "عين قزام", baladiyat: ["عين قزام", "تين زاوتن"] }
+        };
+
+        // --- وظائف الولايات والبلديات ---
+        
+        function populateWilayat() {
+            const sortedCities = Object.entries(algeriaCities).sort(([, a], [, b]) => a.name.localeCompare(b.name, 'ar'));
+            
+            sortedCities.forEach(([code, data]) => {
+                const option = document.createElement('option');
+                option.value = code;
+                option.textContent = data.name;
+                wilayaSelect.appendChild(option);
+            });
+        }
+
+        function populateBaladiyat(wilayaCode) {
+            baladiyaSelect.innerHTML = '<option value="">-- اختر البلدية --</option>';
+            
+            if (wilayaCode && algeriaCities[wilayaCode]) {
+                const baladiyat = algeriaCities[wilayaCode].baladiyat.sort((a, b) => a.localeCompare(b, 'ar'));
+                baladiyat.forEach(baladiya => {
+                    const option = document.createElement('option');
+                    option.value = baladiya;
+                    option.textContent = baladiya;
+                    baladiyaSelect.appendChild(option);
+                });
+                baladiyaSelect.disabled = false;
+                baladiyaSelect.classList.remove('bg-gray-100');
+            } else {
+                baladiyaSelect.disabled = true;
+                baladiyaSelect.classList.add('bg-gray-100');
+            }
+        }
+        
+        // --- وظيفة التحكم في الزر العائم والزر الثابت ---
+        function checkFloatingCtaVisibility() {
+            // تحقق فقط إذا كان العرض عرض موبايل 
+            if (window.innerWidth >= 768) {
+                return;
+            }
+            
+            // يجب أن يكون الزر مرئياً فقط إذا كانت هناك كمية مختارة
+            const isEnabled = totalQuantity > 0;
+            
+            const checkoutTop = checkoutSection.offsetTop;
+            
+            // الحالة 1: تم اختيار منتج، ولكن لم يصل المستخدم إلى قسم الدفع بعد
+            // نستخدم فقط (window.scrollY < (checkoutTop - window.innerHeight / 2)) كتقريب
+            if (isEnabled && window.scrollY < (checkoutTop - (window.innerHeight / 2))) {
+                floatingCtaContainer.classList.add('visible');
+            } 
+            // الحالة 2: وصل المستخدم إلى قسم الدفع (اخفِ الزر العائم) أو لم يختر أي منتج
+            else {
+                floatingCtaContainer.classList.remove('visible');
+            }
+        }
+
+        // --- المعالجات والأحداث ---
+        
+        // حدث التحكم بالكمية
+        modelsContainer.addEventListener('click', (event) => {
+            const button = event.target.closest('.qty-btn');
+            if (!button) return;
+
+            const card = button.closest('.model-card');
+            const modelName = card.dataset.model;
+            const qtySpan = card.querySelector('.qty-value');
+            let currentQty = parseInt(qtySpan.textContent);
+            const action = button.dataset.action;
+
+            if (action === 'plus') {
+                currentQty++;
+            } else if (action === 'minus' && currentQty > 0) {
+                currentQty--;
+            }
+
+            qtySpan.textContent = currentQty;
+            selectedModels[modelName] = currentQty;
+
+            card.querySelector('[data-action="minus"]').disabled = currentQty === 0;
+            card.classList.toggle('active', currentQty > 0);
+
+            updateCart();
+            // مهم: فحص حالة الزر العائم بعد كل تحديث للعربة
+            checkFloatingCtaVisibility(); 
+        });
+
+        // حدث النقر على الزر العائم (للتمرير إلى قسم الدفع)
+        floatingCtaButton.addEventListener('click', () => {
+             // التحقق من وجود كمية قبل التمرير
+            if (totalQuantity > 0) {
+                // التمرير إلى قسم الدفع مع ترك هامش بسيط في الأعلى
+                window.scrollTo({ top: checkoutSection.offsetTop - 10, behavior: 'smooth' });
+            }
+        });
+
+        // حدث التمرير للتحكم في الزر العائم
+        window.addEventListener('scroll', checkFloatingCtaVisibility);
+
+        // حدث تغيير الولاية
+        wilayaSelect.addEventListener('change', (e) => {
+            populateBaladiyat(e.target.value);
+        });
+
+        // حدث إرسال النموذج
+        orderForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (totalQuantity === 0) {
+                console.error('الرجاء اختيار منتج واحد على الأقل قبل تأكيد الطلب.');
+                window.scrollTo({ top: document.getElementById('order-builder').offsetTop - 50, behavior: 'smooth' });
+                return;
+            }
+
+            if (!wilayaSelect.value || !baladiyaSelect.value) {
+                // بديل لـ alert: تمرير إلى حقل الولاية مع تسليط الضوء عليه (إن أمكن)
+                wilayaSelect.focus();
+                // يمكنك استخدام مودال مخصص بدلاً من alert في بيئة إنتاجية
+                console.error('الرجاء اختيار الولاية والبلدية بشكل صحيح لإتمام الطلب.'); 
+                return;
+            }
+
+            const form = e.target;
+            const wilayaName = form.wilaya.options[form.wilaya.selectedIndex].textContent;
+            
+            // تجميع بيانات الطلب
+            const orderDetails = {
+                'الاسم': form.full_name.value,
+                'الهاتف': form.phone.value,
+                'الولاية': wilayaName,
+                'البلدية': form.baladiya.value,
+                'ملاحظات': form.notes.value,
+                'الكمية_الإجمالية': totalQuantity,
+                'الموديلات_المختارة': JSON.stringify(selectedModels),
+                'الإجمالي_النهائي': finalTotalDisplayValue,
+                'تكلفة_الشحن': document.getElementById('shipping-cost').textContent,
+                // يتم تأكيد طريقة الدفع هنا بشكل صريح في البيانات المرسلة (ولكنها غير معروضة للمستخدم)
+                'طريقة_الدفع': 'الدفع عند الاستلام (COD)' 
+            };
+
+            // 1. تخزين البيانات الضرورية في Local Storage لصفحة الشكر (محاكاة)
+            localStorage.setItem('orderFinalTotal', finalTotalDisplayValue);
+            localStorage.setItem('orderPhone', form.phone.value);
+            localStorage.setItem('confirmationNumber', CONTACT_PHONE);
+            
+            // 2. إرسال البيانات (محاكاة: في بيئة حقيقية، يتم إرسالها هنا عبر Fetch API)
+            console.log('Order Data:', orderDetails);
+            
+            // 3. نكتفي حاليًا بعرض رسالة نجاح بسيطة 
+            const successMessageDiv = document.createElement('div');
+            successMessageDiv.className = 'fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50';
+            successMessageDiv.innerHTML = `
+                <div class="bg-white p-8 rounded-xl shadow-2xl text-center max-w-sm mx-auto">
+                    <h3 class="text-3xl font-extrabold text-green-600 mb-4">✅ تم تأكيد الطلب!</h3>
+                    <p class="text-gray-700 text-lg mb-4">سيتم الاتصال بك على **${form.phone.value}** لتأكيد تفاصيل الشحن.</p>
+                    <p class="text-2xl font-black text-blue-700 mb-6">الإجمالي: ${finalTotalDisplayValue}</p>
+                    <button onclick="window.location.reload();" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg">حسناً، فهمت</button>
+                </div>
+            `;
+            document.body.appendChild(successMessageDiv);
+
+        });
+
+        // --- التهيئة عند تحميل الصفحة ---
+        window.onload = () => {
+            modelsContainer.querySelectorAll('.model-card').forEach(card => {
+                const modelName = card.dataset.model;
+                selectedModels[modelName] = 0;
+            });
+            populateWilayat();
+            initCarousel();
+            updateCart();
+            // فحص الرؤية الأولية للزر العائم (يجب أن يكون مخفياً في البداية)
+            checkFloatingCtaVisibility();
+        };
+
+    </script>
+</body>
+</html>
